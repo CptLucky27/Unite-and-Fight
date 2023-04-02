@@ -2,7 +2,7 @@
   "name": "unite-and-fight",
   "title": "Unite and Fight",
   "description": "Allows players to select a character and make a copy with full access.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "minimumCoreVersion": "0.8.9",
   "author": "Your Name",
   "manifest": "https://raw.githubusercontent.com/CptLucky27/Unite-and-Fight/main/module.json",
@@ -21,19 +21,12 @@
     "full access"
   ],
   "permissions": [
-    "FILES_MODULE",
-    "FILES_USER",
-    "ENTITY_CREATE",
-    "ENTITY_UPDATE",
-    "ENTITY_PERMISSIONS",
-    "DRAWING_CREATE",
-    "DRAWING_UPDATE",
-    "DRAWING_DELETE",
-    "DRAWING_PERMISSIONS",
-    "NOTE_CREATE",
-    "NOTE_UPDATE",
-    "NOTE_DELETE",
-    "NOTE_PERMISSIONS",
-    "SETTING_MODIFY"
+    {
+      "name": "uniteAndFight.copyCharacter",
+      "title": "Copy Character",
+      "description": "Allows users to copy a character with full access.",
+      "type": "player",
+      "default": false
+    }
   ]
 }
