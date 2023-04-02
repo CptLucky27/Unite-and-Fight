@@ -1,0 +1,24 @@
+{
+  "name": "fight-and-unite",
+  "title": "Fight and Unite",
+  "description": "Allows players to select a character and make a copy with full access.",
+  "version": "0.1.0",
+  "minimumCoreVersion": "0.8.9",
+  "author": "Your Name",
+  "dependencies": [],
+  "scripts": [
+    "module.js"
+  ],
+  "styles": [
+    "module.css"
+  ],
+  "icon": "icons/crimson.png",
+  "keywords": [
+    "foundryvtt",
+    "module",
+    "character selection",
+    "copy character",
+    "full access"
+  ],
+  "manifest": "https://raw.githubusercontent.com/CptLucky27/Unite-and-Fight/main/module.json"
+}
