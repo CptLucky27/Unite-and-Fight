@@ -1,98 +1,54 @@
-class UniteAndFightCanvasLayer extends CanvasLayer {
-  constructor() {
-    super();
-  }
-
-  async _onClick(event) {
-    // Check if the event is a left-click
-    if (event.button !== 0) return;
-
-    // Get the position of the click on the canvas
-    const position = event.data.getLocalPosition(this);
-
-    // Check if the click is within a drawing
-    const drawing = this._getDrawingAtPosition(position);
-    if (!drawing) return;
-
-    // Get the character selection form
-    const formData = await this._getCharacterSelectionForm();
-    if (!formData) return;
-
-    // Create a copy of the selected character and assign it to the player
-    const actor = await this._copyCharacter(formData.characterId);
-    game.user.assignHotbarMacro(actor);
-
-    // Show a confirmation message to the player
-    ui.notifications.info(`You have selected character "${actor.name}"`);
-
-    // Remove the drawing from the canvas
-    drawing.delete();
-  }
-
-  _getDrawingAtPosition(position) {
-    // Iterate over the canvas drawings and check if the position is within a drawing
-    for (const drawing of canvas.drawings.placeables) {
-      if (drawing.contains(position.x, position.y)) {
-        return drawing;
-      }
+Hooks.on('renderDrawingConfig', (app, html, data) => {
+  const buttons = $('<div class="form-group"></div>');
+  const charSelect = $('<select class="character-select"></select>');
+  charSelect.append($('<option value="" selected>Select a character...</option>'));
+  game.actors.entities.forEach(actor => {
+    if (actor.data.type === "character") {
+      charSelect.append($('<option></option>').val(actor.id).html(actor.data.name));
     }
-    return null;
-  }
+  });
+  buttons.append(charSelect);
+  html.find('.tab').last().after($('<div class="tab" data-tab="unite-and-fight"></div>').append(buttons));
+  html.find('.tab[data-tab="unite-and-fight"]').hide();
 
-  async _getCharacterSelectionForm() {
-    // Get a list of all the characters the player has access to
-    const characters = game.actors.filter(actor => actor.hasPerm(game.user, "OWNER"));
+  const tabButton = $(`<a class="item" data-tab="unite-and-fight"><i class="fas fa-users"></i> Unite and Fight</a>`);
+  const tabs = html.find('.tabs');
+  tabs.append(tabButton);
 
-    // Create a form for selecting a character
-    const formData = {
-      characterId: {
-        label: "Select a character:",
-        options: {}
+  tabButton.click(() => {
+    tabs.find('.item').removeClass('active');
+    tabButton.addClass('active');
+    html.find('.tab').hide();
+    html.find('.tab[data-tab="unite-and-fight"]').show();
+  });
+
+  html.find('form').submit(event => {
+    event.preventDefault();
+    const charId = charSelect.val();
+    if (!charId) {
+      ui.notifications.error('You must select a character.');
+      return;
+    }
+    const drawingId = data.object._id;
+    const message = {
+      type: 'copy-character',
+      data: {
+        drawingId: drawingId,
+        characterId: charId
       }
     };
-    for (const character of characters) {
-      formData.characterId.options[character.id] = character.name;
-    }
+    game.socket.emit('module.unite-and-fight', message);
+    app.close();
+  });
+});
 
-    // Show the form to the player and wait for them to submit it
-    const form = await new Promise(resolve => {
-      new Dialog({
-        title: "Select a Character",
-        content: `<form>${renderFormFields(formData)}</form>`,
-        buttons: {
-          submit: {
-            label: "Select",
-            callback: (html) => {
-              const formValues = validateFormValues(html.find("form")[0]);
-              resolve(formValues);
-            }
-          },
-          cancel: {
-            label: "Cancel"
-          }
-        }
-      }).render(true);
-    });
-
-    return form;
-  }
-
-  async _copyCharacter(characterId) {
-    // Get the character data
-    const character = game.actors.get(characterId);
-    const characterData = duplicate(character.data);
-
-    // Set the new owner to the current user
-    characterData.permission[game.user.id] = 3;
-
-    // Create a new actor from the character data
-    const actor = await Actor.create(characterData);
-
-    return actor;
-  }
-}
-
-Hooks.on("canvasInit", () => {
-  const canvasLayer = new UniteAndFightCanvasLayer();
-  canvas.layers.floors.addChild(canvasLayer);
+Hooks.on('socketlib.ready', () => {
+  game.socket.on('module.unite-and-fight.copy-character', data => {
+    const drawing = canvas.getLayer(data.drawingId);
+    const character = game.actors.get(data.characterId);
+    const duplicate = character.clone({temporary: true});
+    duplicate.owner = drawing.data.author;
+    canvas.scene.createEmbeddedDocuments('Actor', [duplicate.data], {parent: drawing});
+    ui.notifications.info(`${character.data.name} copied to ${drawing.name}.`);
+  });
 });
