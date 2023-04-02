@@ -1,32 +1,27 @@
 {
   "name": "unite-and-fight",
   "title": "Unite and Fight",
-  "description": "Allows players to select a character and make a copy with full access.",
-  "version": "0.2.0",
-  "minimumCoreVersion": "0.8.9",
+  "description": "Adds a clickable tile that allows users to select characters to copy and access.",
   "author": "Your Name",
+  "version": "0.1.0",
+  "minimumCoreVersion": "0.8.9",
+  "compatibleCoreVersion": "0.8.x",
   "manifest": "https://raw.githubusercontent.com/CptLucky27/Unite-and-Fight/main/module.json",
-  "dependencies": [],
   "scripts": [
     "module.js"
   ],
   "styles": [
     "module.css"
   ],
+  "dependencies": {
+    "foundryvtt": "0.8.x"
+  },
   "keywords": [
     "foundryvtt",
     "module",
-    "character selection",
-    "copy character",
-    "full access"
-  ],
-  "permissions": [
-    {
-      "name": "uniteAndFight.copyCharacter",
-      "title": "Copy Character",
-      "description": "Allows users to copy a character with full access.",
-      "type": "player",
-      "default": false
-    }
+    "character",
+    "select",
+    "copy",
+    "access"
   ]
 }
