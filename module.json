@@ -13,14 +13,27 @@
   "styles": [
     "module.css"
   ],
-  "templates": [
-    "dialog.html"
-  ],
   "keywords": [
     "foundryvtt",
     "module",
     "character selection",
     "copy character",
     "full access"
+  ],
+  "permissions": [
+    "FILES_MODULE",
+    "FILES_USER",
+    "ENTITY_CREATE",
+    "ENTITY_UPDATE",
+    "ENTITY_PERMISSIONS",
+    "DRAWING_CREATE",
+    "DRAWING_UPDATE",
+    "DRAWING_DELETE",
+    "DRAWING_PERMISSIONS",
+    "NOTE_CREATE",
+    "NOTE_UPDATE",
+    "NOTE_DELETE",
+    "NOTE_PERMISSIONS",
+    "SETTING_MODIFY"
   ]
 }
